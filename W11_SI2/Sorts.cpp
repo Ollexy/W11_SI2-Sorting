@@ -118,37 +118,98 @@ void Sorts::insertionSort()
 	std::cout << "Duration of sorting: " << duration << " seconds" << std::endl << std::endl;
 }
 
-void Sorts::mergeSort()
+void Sorts::mergeSort(int array[], int const left, int const mid, int const right)
 {
-	clock_t start{}, stop{}, duration{};
-	int arr[500]{};
+	auto const subArrayOne = mid - left + 1;
+	auto const subArrayTwo = right - mid;
 
-	for (size_t i{ 0 }; i < 499; i++) {
-		arr[i] = rand() % 500;
+	// Create temp arrays
+	auto* leftArray = new int[subArrayOne],
+		* rightArray = new int[subArrayTwo];
+
+	// Copy data to temp arrays leftArray[] and rightArray[]
+	for (auto i = 0; i < subArrayOne; i++)
+		leftArray[i] = array[left + i];
+	for (auto j = 0; j < subArrayTwo; j++)
+		rightArray[j] = array[mid + 1 + j];
+
+	auto indexOfSubArrayOne = 0, // Initial index of first sub-array
+		indexOfSubArrayTwo = 0; // Initial index of second sub-array
+	int indexOfMergedArray = left; // Initial index of merged array
+
+	// Merge the temp arrays back into array[left..right]
+	while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo) {
+		if (leftArray[indexOfSubArrayOne] <= rightArray[indexOfSubArrayTwo]) {
+			array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+			indexOfSubArrayOne++;
+		}
+		else {
+			array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+			indexOfSubArrayTwo++;
+		}
+		indexOfMergedArray++;
 	}
-	start = clock();
+	// Copy the remaining elements of
+	// left[], if there are any
+	while (indexOfSubArrayOne < subArrayOne) {
+		array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+		indexOfSubArrayOne++;
+		indexOfMergedArray++;
+	}
+	// Copy the remaining elements of
+	// right[], if there are any
+	while (indexOfSubArrayTwo < subArrayTwo) {
+		array[indexOfMergedArray]
+			= rightArray[indexOfSubArrayTwo];
+		indexOfSubArrayTwo++;
+		indexOfMergedArray++;
+	}
+	delete[] leftArray;
+	delete[] rightArray;
 }
 
-void Sorts::quickSort()
+void Sorts::quickSort(int arr[], int l, int r)
 {
-	clock_t start{}, stop{}, duration{};
-	int arr[500]{};
-
-	for (size_t i{ 0 }; i < 499; i++) {
-		arr[i] = rand() % 500;
+	if (l < r) {
+		int pivot = l;
+		int i = l;
+		int j = r;
+		while (i < j) {
+			while (arr[i] <= arr[pivot] && i < r)
+				i++;
+			while (arr[j] > arr[pivot])
+				j--;
+			if (i < j) {
+				std::swap(arr[i], arr[j]);
+			}
+		}
+		std::swap(arr[pivot], arr[j]);
+		quickSort(arr, l, j - 1);
+		quickSort(arr, j + 1, r);
 	}
-	start = clock();
 }
 
-void Sorts::heapSort()
+void Sorts::heapSort(int arr[], int n, int i)
 {
-	clock_t start{}, stop{}, duration{};
-	int arr[500]{};
+	int largest = i; // Initialize largest as root
+	int l = 2 * i + 1; // left = 2*i + 1
+	int r = 2 * i + 2; // right = 2*i + 2
 
-	for (size_t i{ 0 }; i < 499; i++) {
-		arr[i] = rand() % 500;
+	// If left child is larger than root
+	if (l < n && arr[l] > arr[largest])
+		largest = l;
+
+	// If right child is larger than largest so far
+	if (r < n && arr[r] > arr[largest])
+		largest = r;
+
+	// If largest is not root
+	if (largest != i) {
+		std::swap(arr[i], arr[largest]);
+
+		// Recursively heapify the affected sub-tree
+		heapSort(arr, n, largest);
 	}
-	start = clock();
 }
 
 void Sorts::allSorts()
@@ -156,7 +217,4 @@ void Sorts::allSorts()
 	selectionSort();
 	bubbleSort();
 	insertionSort();
-	//mergeSort();
-	//quickSort();
-	//heapSort();
 }

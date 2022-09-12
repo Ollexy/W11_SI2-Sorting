@@ -8,9 +8,9 @@ public:
 	void selectionSort();
 	void bubbleSort();
 	void insertionSort();
-	void mergeSort();
-	void quickSort();
-	void heapSort();
+	void mergeSort(int array[], int const left, int const mid, int const right);
+	void quickSort(int arr[], int l, int r);
+	void heapSort(int arr[], int n, int i);
 	void allSorts();
 };
 
